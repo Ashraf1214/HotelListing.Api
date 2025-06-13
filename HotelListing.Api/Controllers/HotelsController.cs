@@ -37,7 +37,7 @@ public class HotelsController : ControllerBase
     // POST api/<HotelsController>
     [HttpPost]
     public ActionResult<Hotel> Post([FromBody]Hotel hotel)
-    //[FormBody] maps the body of the HTTP request (JSON) into the object of Hotel ,i.e., hotel (Model Binding)
+    //[FromBody] maps the body of the HTTP request (JSON) into the object of Hotel ,i.e., hotel (Model Binding)
     {
         if (List.Any(h => h.Id == hotel.Id)) //if list contains 'h' where h.Id is equal to hotel.Id
             return BadRequest("Hotel with this id already exist");
