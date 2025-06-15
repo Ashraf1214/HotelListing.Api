@@ -15,5 +15,5 @@ public partial class Hotel
 
     public int CountryId { get; set; }
 
-    public virtual Country Country { get; set; } = null!;
+    public virtual Country? Country { get; set; } = null!;
 }
