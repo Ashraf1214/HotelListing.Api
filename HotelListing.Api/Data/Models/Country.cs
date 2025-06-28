@@ -11,5 +11,5 @@ public partial class Country
 
     public string? ShortName { get; set; }
 
-    public virtual ICollection<Hotel> Hotels { get; set; } = new List<Hotel>();
+    public virtual ICollection<Hotel> Hotels { get; set; }
 }
