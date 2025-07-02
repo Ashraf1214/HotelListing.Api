@@ -16,4 +16,6 @@ public partial class Hotel
 
     [ForeignKey(nameof(CountryId))]
     public int CountryId { get; set; }
+
+    public virtual Country Country { get; set; }
 }
