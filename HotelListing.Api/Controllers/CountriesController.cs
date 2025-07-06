@@ -7,9 +7,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using HotelListing.Api.Data;
 using HotelListing.Api.Data.Models;
-using HotelListing.Api.Data.DTO;
 using AutoMapper;
 using HotelListing.Api.Contracts;
+using HotelListing.Api.Data.DTO.Country;
+using HotelListing.Api.Data.DTO.Hotel;
 
 namespace HotelListing.Api.Controllers
 {
@@ -28,16 +29,16 @@ namespace HotelListing.Api.Controllers
 
         // GET: api/Countries
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<GetCountryDTO>>> GetCountries()
+        public async Task<ActionResult<IEnumerable<GetAllCountriesDTO>>> GetCountries()
         {
             var countryList = await _countriesRepo.GetAllAsync();
-            var resultSet = _mapper.Map<List<GetCountryDTO>>(countryList);
+            var resultSet = _mapper.Map<List<GetAllCountriesDTO>>(countryList);
             return resultSet;
         }
 
         // GET: api/Countries/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<CountryDTO>> GetCountry(int id)
+        public async Task<ActionResult<GetAllCountriesDTO>> GetCountry(int id)
         {
             var country = await _countriesRepo.GetDetails(id);
                 //.Include(q => q.Hotels).FirstOrDefaultAsync(q => q.CountryId == id);
@@ -46,8 +47,7 @@ namespace HotelListing.Api.Controllers
             {
                 return NotFound();
             }
-            var countryResult = _mapper.Map<CountryDTO>(country);
-            return countryResult;
+            return _mapper.Map<GetAllCountriesDTO>(country);
         }
 
         // PUT: api/Countries/5

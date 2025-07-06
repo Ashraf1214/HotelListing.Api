@@ -18,6 +18,8 @@ builder.Services.AddAutoMapper(typeof(MapperConfig));
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 //Add service for ICountriesRepo and CountryRepo
 builder.Services.AddScoped<ICountriesRepository, CountriesRepository>();
+//Add service for IHotelRepo and HotelRepo
+builder.Services.AddScoped<IHotelRepository, HotelRepository>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

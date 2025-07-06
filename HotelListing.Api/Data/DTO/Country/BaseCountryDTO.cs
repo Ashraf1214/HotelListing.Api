@@ -1,4 +1,4 @@
-﻿namespace HotelListing.Api.Data.DTO
+﻿namespace HotelListing.Api.Data.DTO.Country
 {
     public abstract class BaseCountryDTO
     {
