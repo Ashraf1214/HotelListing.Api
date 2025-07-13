@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using HotelListing.Api.Data.DTO.Country;
 using HotelListing.Api.Data.DTO.Hotel;
+using HotelListing.Api.Data.DTO.User;
 using HotelListing.Api.Data.Models;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.Blazor;
 
@@ -19,6 +20,7 @@ namespace HotelListing.Api.Configuration
             CreateMap<UpdateHotelDTO, Hotel>().ReverseMap();
             CreateMap<CreateHotelDTO, Hotel>().ReverseMap();
             CreateMap<GetAllHotelsDTO, Hotel>().ReverseMap();
+            CreateMap<Apiuser, ApiUserDTO>().ReverseMap();
         }
     }
 }

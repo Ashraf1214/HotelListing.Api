@@ -10,6 +10,7 @@ using HotelListing.Api.Data.Models;
 using HotelListing.Api.Contracts;
 using AutoMapper;
 using HotelListing.Api.Data.DTO.Hotel;
+using Microsoft.AspNetCore.Authorization;
 
 namespace HotelListing.Api.Controllers
 {
@@ -28,6 +29,7 @@ namespace HotelListing.Api.Controllers
 
         // GET: api/Hotels
         [HttpGet]
+        [Authorize(Roles = "Administrator,User")]
         public async Task<ActionResult<IEnumerable<GetAllHotelsDTO>>> GetHotels()
         {
             var hotels = await _hotelRepo.GetAllAsync();
@@ -36,6 +38,7 @@ namespace HotelListing.Api.Controllers
 
         // GET: api/Hotels/5
         [HttpGet("{id}")]
+        [Authorize(Roles = "Administrator,User")]
         public async Task<ActionResult<GetHotelDTO>> GetHotel(int id)
         {
             var hotel = await _hotelRepo.GetAsync(id);
@@ -51,6 +54,7 @@ namespace HotelListing.Api.Controllers
         // PUT: api/Hotels/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> PutHotel(int id, UpdateHotelDTO hotel)
         {
             if (!await _hotelRepo.Exists(id))
@@ -81,6 +85,7 @@ namespace HotelListing.Api.Controllers
         // POST: api/Hotels
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [Authorize(Roles = "Administrator")]
         public async Task<ActionResult<Hotel>> PostHotel(CreateHotelDTO hotelDTO)
         {
             
@@ -91,6 +96,7 @@ namespace HotelListing.Api.Controllers
 
         // DELETE: api/Hotels/5
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> DeleteHotel(int id)
         {
             var hotel = await _hotelRepo.GetAsync(id);
