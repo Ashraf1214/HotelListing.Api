@@ -49,19 +49,20 @@ namespace HotelListing.Api.Repository
             _user.UserName = apiuserDTO.Email;
 
             var result = await _userManager.CreateAsync(_user, apiuserDTO.Password);
-            if (result.Succeeded)
-            {
+            if (!result.Succeeded)
+                return result.Errors;
 
-                if (apiuserDTO.RoleLevel.Equals('A'))
-                {
-                    await _userManager.AddToRoleAsync(_user, "Administrator");
-                }
-                else if (apiuserDTO.RoleLevel.Equals('U'))
-                {
-                    await _userManager.AddToRoleAsync(_user, "User");
-                }
-            }
-            return result.Errors;
+            var role = apiuserDTO.RoleLevel switch
+            {
+                'A' => "Administrator",
+                'U' => "User",
+                _ => null
+            };
+
+            if (role != null)
+                await _userManager.AddToRoleAsync(_user, role);
+
+            return Enumerable.Empty<IdentityError>();
         }
 
         //JWT Token generetion process

@@ -43,6 +43,7 @@ builder.Services.AddIdentityCore<Apiuser>()
     .AddEntityFrameworkStores<HotelListingDbContext>()
     .AddDefaultTokenProviders();
 
+//Registering JWT tokenization service
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
