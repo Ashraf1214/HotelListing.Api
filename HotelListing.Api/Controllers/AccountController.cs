@@ -13,9 +13,12 @@ namespace HotelListing.Api.Controllers
     public class AccountController : ControllerBase
     {
         private readonly IAuthManager _authManager;
-        public AccountController(IAuthManager authManager)
+        private readonly ILogger<AccountController> _logger;
+
+        public AccountController(IAuthManager authManager, ILogger<AccountController> logger)
         {
             this._authManager = authManager;
+            this._logger = logger;
         }
 
         [HttpPost]
@@ -30,22 +33,34 @@ namespace HotelListing.Api.Controllers
         [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Register([FromBody] ApiUserDTO apiUserDTO)
         {
+            _logger.LogInformation($"Registering a new user with email: {apiUserDTO.Email}");
             //This line checks whether the incoming JSON body successfully
             //mapped to the ApiUserDTO object(i.e., model binding worked)
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            var errors = await _authManager.Register(apiUserDTO);
-            if (errors.Any())
+            try
             {
-                foreach (var error in errors)
+                var errors = await _authManager.Register(apiUserDTO);
+                if (errors.Any())
                 {
-                    ModelState.AddModelError(error.Code, error.Description);
+                    foreach (var error in errors)
+                    {
+                        ModelState.AddModelError(error.Code, error.Description);
+                    }
+                    return BadRequest(ModelState);
                 }
-                return BadRequest(ModelState);
+                return Ok("Account saved successfully");
             }
-            return Ok("Account saved successfully");
+            catch (Exception)
+            {
+                _logger.LogError($"Something went wrong in the {nameof(Register)} method. Registration was attempted for {apiUserDTO.Email}");
+                return Problem(title: "Database save failure",
+                    detail: "Something went wrong while saving the account. Please try again later.", 
+                    statusCode: 500);
+            }
+
         }
 
         [HttpPost]
@@ -59,12 +74,24 @@ namespace HotelListing.Api.Controllers
         //[FromBody] binds the DTO (apiUserDTO) or model to the JSON payload sent by the client and received by the server.
         public async Task<IActionResult> Login([FromBody] LoginDTO loginDTO)
         {
-            var authResponse = await _authManager.Login(loginDTO);
-            if (authResponse == null)
+            _logger.LogInformation($"Attempting to log in user with email: {loginDTO.Email}");
+            try
             {
-                return Unauthorized();
+                var authResponse = await _authManager.Login(loginDTO);
+                if (authResponse == null)
+                {
+                    return Unauthorized();
+                }
+                return Ok(authResponse);
             }
-            return Ok(authResponse);
+            catch (Exception)
+            {
+               _logger.LogError($"Something went wrong in the {nameof(Login)} method. Login was attempted for {loginDTO.Email}.");
+                return Problem(title: "Login failure",
+                    detail: "Something went wrong while logging in. Please try again later.",
+                    statusCode: 500);
+            }
+            
         }
 
 
