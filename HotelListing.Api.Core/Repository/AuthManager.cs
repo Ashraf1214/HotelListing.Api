@@ -4,6 +4,7 @@ using HotelListing.Api.Data.DTO.User;
 using HotelListing.Api.Data.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -29,7 +30,9 @@ namespace HotelListing.Api.Repository
 
         public async Task<AuthResponseDTO> Login(LoginDTO loginUserDTO)
         {
+            //Checking the DB for user with this email
             _user = await _userManager.FindByEmailAsync(loginUserDTO.Email);
+
             var isValid = await _userManager.CheckPasswordAsync(_user, loginUserDTO.Password);
             if (_user is null || !isValid)
             {

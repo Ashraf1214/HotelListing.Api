@@ -4,6 +4,7 @@ namespace HotelListing.Api.Controllers
 {
     [ApiController]
     [Route("[controller]")]
+    //[ApiVersion("1")]
     public class WeatherForecastController : ControllerBase
     {
         private static readonly string[] Summaries = new[]

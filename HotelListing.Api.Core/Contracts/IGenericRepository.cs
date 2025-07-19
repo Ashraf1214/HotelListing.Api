@@ -1,4 +1,6 @@
-﻿namespace HotelListing.Api.Contracts
+﻿using HotelListing.Api.Data.Pagination;
+
+namespace HotelListing.Api.Contracts
 {
     public interface IGenericRepository<T> where T : class
     {
@@ -8,5 +10,7 @@
         Task UpdateAsync(T entity);
         Task DeleteAsync(int id);
         Task<bool> Exists(int id);
+
+        Task<PagedResults<TResult>> GetAllAsync<TResult>(QueryParameters queryParameters);
     }
 }

@@ -11,6 +11,11 @@ using HotelListing.Api.Data.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using HotelListing.Api.Middleware;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Versioning;
+using Microsoft.AspNetCore.OData;
+
 
 
 
@@ -32,7 +37,7 @@ builder.Services.AddScoped<IHotelRepository, HotelRepository>();
 builder.Services.AddScoped<IAuthManager, AuthManager>();
 
 
-builder.Services.AddControllers();
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -63,6 +68,36 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
+//API versioning service
+builder.Services.AddApiVersioning(options =>
+{
+    options.AssumeDefaultVersionWhenUnspecified = true;
+    options.DefaultApiVersion = new ApiVersion(1, 0);
+    options.ReportApiVersions = true;
+    options.ApiVersionReader = ApiVersionReader.Combine(
+        new QueryStringApiVersionReader("api-version"),
+        new HeaderApiVersionReader("X-version"),
+        new MediaTypeApiVersionReader("ver"));
+});
+
+builder.Services.AddVersionedApiExplorer(options =>
+{
+    options.GroupNameFormat = "'v'VVV";
+    options.SubstituteApiVersionInUrl = true;
+});
+
+//Caching
+builder.Services.AddResponseCaching(options =>
+{
+    options.UseCaseSensitivePaths = true; // Optional: Use case-sensitive paths
+    options.MaximumBodySize = 1024; // Optional: Set maximum body size for cached responses
+});
+
+builder.Services.AddControllers().AddOData(Options =>
+{
+    Options.Select().Filter().OrderBy().Expand().Count().SetMaxTop(100);
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -72,7 +107,19 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseMiddleware<ExceptionMiddleware>();
 app.UseHttpsRedirection();
+app.UseCors("AllowAll");
+app.Use(async (context, next) =>
+{
+    context.Response.GetTypedHeaders().CacheControl = new Microsoft.Net.Http.Headers.CacheControlHeaderValue
+    {
+        Public = true,
+        MaxAge = TimeSpan.FromMinutes(10)
+    };
+    context.Response.Headers[Microsoft.Net.Http.Headers.HeaderNames.Vary] = new string[] { "Accept-Encoding" };
+    await next();
+});
 app.UseAuthentication();
 app.UseAuthorization();
 

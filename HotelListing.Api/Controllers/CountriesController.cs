@@ -11,6 +11,11 @@ using AutoMapper;
 using HotelListing.Api.Contracts;
 using HotelListing.Api.Data.DTO.Country;
 using HotelListing.Api.Data.DTO.Hotel;
+using HotelListing.Api.Exceptions;
+using HotelListing.Api.Data.Pagination;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.OData.Query;
 
 namespace HotelListing.Api.Controllers
 {
@@ -28,7 +33,15 @@ namespace HotelListing.Api.Controllers
         }
 
         // GET: api/Countries
+        [HttpGet("GetAll")]
+        public async Task<ActionResult<PagedResults<GetAllCountriesDTO>>> GetPagedCountries([FromQuery] QueryParameters queryParameters)
+        {
+            var pagedcountryList = await _countriesRepo.GetAllAsync<GetAllCountriesDTO>(queryParameters);
+            return Ok(pagedcountryList);
+        }
+
         [HttpGet]
+        [EnableQuery]
         public async Task<ActionResult<IEnumerable<GetAllCountriesDTO>>> GetCountries()
         {
             var countryList = await _countriesRepo.GetAllAsync();
@@ -45,7 +58,7 @@ namespace HotelListing.Api.Controllers
 
             if (country == null)
             {
-                return NotFound();
+                throw new NotFoundException(nameof(GetCountry), id);
             }
             return _mapper.Map<GetAllCountriesDTO>(country);
         }
@@ -57,7 +70,7 @@ namespace HotelListing.Api.Controllers
         {
             //var country = await _countriesRepo.GetAsync(id);
             if (await _countriesRepo.Exists(id) != true)
-            { return NotFound(); }
+            { throw new NotFoundException(nameof(GetCountry), id); }
             
             var country = await _countriesRepo.GetAsync(id);
             _mapper.Map(updateCountry, country);
@@ -104,7 +117,7 @@ namespace HotelListing.Api.Controllers
             //    return NotFound();
             //}
             if (await _countriesRepo.Exists(id) != true)
-            { return NotFound(); }
+            { throw new NotFoundException(nameof(GetCountry), id); }
             await _countriesRepo.DeleteAsync(id);
 
             return NoContent();

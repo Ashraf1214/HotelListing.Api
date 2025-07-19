@@ -34,14 +34,12 @@ namespace HotelListing.Api.Controllers
         public async Task<IActionResult> Register([FromBody] ApiUserDTO apiUserDTO)
         {
             _logger.LogInformation($"Registering a new user with email: {apiUserDTO.Email}");
-            //This line checks whether the incoming JSON body successfully
+            //This line checks whether the incoming JSON body arrived successfully
             //mapped to the ApiUserDTO object(i.e., model binding worked)
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            try
-            {
                 var errors = await _authManager.Register(apiUserDTO);
                 if (errors.Any())
                 {
@@ -52,14 +50,7 @@ namespace HotelListing.Api.Controllers
                     return BadRequest(ModelState);
                 }
                 return Ok("Account saved successfully");
-            }
-            catch (Exception)
-            {
-                _logger.LogError($"Something went wrong in the {nameof(Register)} method. Registration was attempted for {apiUserDTO.Email}");
-                return Problem(title: "Database save failure",
-                    detail: "Something went wrong while saving the account. Please try again later.", 
-                    statusCode: 500);
-            }
+
 
         }
 
@@ -71,7 +62,7 @@ namespace HotelListing.Api.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
 
-        //[FromBody] binds the DTO (apiUserDTO) or model to the JSON payload sent by the client and received by the server.
+        //[FromBody] binds the DTO (LoginDTO) or model to the JSON payload sent by the client and received by the server.
         public async Task<IActionResult> Login([FromBody] LoginDTO loginDTO)
         {
             _logger.LogInformation($"Attempting to log in user with email: {loginDTO.Email}");

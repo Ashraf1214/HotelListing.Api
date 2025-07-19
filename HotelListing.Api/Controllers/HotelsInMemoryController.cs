@@ -6,8 +6,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace HotelListing.Api.Controllers;
 
-[Route("api/[controller]")]
+[Route("api/v{version:apiVersion}/Hotels")]
 [ApiController]
+[ApiVersion("1.0", Deprecated =true)]
 public class HotelsInMemoryController : ControllerBase
 {
     private static List<Hotel> List = new List<Hotel>
