@@ -2,7 +2,9 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
+using Microsoft.EntityFrameworkCore.Design;
+using Microsoft.Extensions.Configuration;
+using System.Runtime.InteropServices;
 
 namespace HotelListing.Api.Data
 {
@@ -26,4 +28,21 @@ namespace HotelListing.Api.Data
         //        warnings.Ignore(RelationalEventId.PendingModelChangesWarning));
         //}
     }
+
+    //    public class HotelListingDbContextFactory : IDesignTimeDbContextFactory<HotelListingDbContext>
+    //    {
+    //        public HotelListingDbContext CreateDbContext(string[] args)
+    //        {
+    //            IConfiguration config = new ConfigurationBuilder()
+    //                .SetBasePath(Directory.GetCurrentDirectory())
+    //                .AddJsonFile("appsettings.json", Optional: false, realoadOnChange: true)
+    //                .Build();
+
+    //            var optionsBuilder = new DbContextOptionsBuilder<HotelListingDbContext>();
+    //            var conn = config.GetConnectionString("HotelListingConnectionString");
+    //            optionsBuilder.UseSqlServer(conn);
+    //            return new HotelListingDbContext(optionsBuilder.Options);
+
+    //        }
+    //    }
 }
